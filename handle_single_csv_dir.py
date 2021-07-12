@@ -1,4 +1,3 @@
-import json
 import csv
 from pandas_utils import load_df, save_df 
 import pandas as pd
@@ -7,44 +6,40 @@ import os
 import glob
 import shutil 
 
-def preprocess_annotations_df(df : pd.DataFrame) -> pd.DataFrame:
-    pass
+def sort_annotations_df_by_class(df : pd.DataFrame,dir_path : str) -> pd.DataFrame:
+    
+    df = df[['image_name','annotation','x','y','width','height']]
+    df = df.sort_values('annotation')
+    df['full_img_path'] = dir_path +'/' + df['image_name']
+    df = df[['full_img_path','annotation','x','y','width','height']]
+    
     return df 
 
-def handle_single_csv_dir_func(dir_path : str,annotation_file_name_const : str) -> pd.DataFrame:
+def handle_single_csv_dir_func(dir_path : str,annotation_file_name_const : str, verbose : bool = True) -> pd.DataFrame:
 
     annotation_file_path = os.path.join(dir_path,annotation_file_name_const)
     
-    df = pd.read_csv(annotation_file_path)
+    basic_raw_df = pd.read_csv(annotation_file_path)
 
     try : 
-        df = preprocess_annotations_df(df)
+        df_by_class = sort_annotations_df_by_class(basic_raw_df,dir_path)
+        print
     except Exception as e : 
         print(e)
 
-    return df 
-
-
-def handle_all_csv_dirs(main_csv_dir_path : str,verbose : bool = True) -> None:
-    
-    for single_dir_path in glob.glob(main_csv_dir_path + '/*.csv'):
-        df = handle_single_csv_dir_func(single_dir_path)
-        # aggregate dfs to new one
-
     if verbose : 
-        print(f'Done handling main_csv_dir_path : {main_csv_dir_path}')
+        print ('\nDone with single_dir_csv ===> ' + f'{os.path.dirname(annotation_file_path)}')
 
+    return df_by_class 
 
 if __name__ == '__main__':
 
     main_csv_dir_path = 'Data/annotations/csv'
     test_path_single_csv_dir = 'Data/annotations/csv/06-20 Product1'
 
-    annotation_file_name_const = 'annotations.csv'
+    ANNOTATION_FILE_NAME_CONST = 'annotations.csv'
     df_name = 'Data/test.pkl'
 
-    df = handle_single_csv_dir_func(test_path_single_csv_dir,annotation_file_name_const)
-    save_df(df, df_name)
-    df = load_df(df_name)
-    handle_all_csv_dirs(main_csv_dir_path)
+    df = handle_single_csv_dir_func(test_path_single_csv_dir,ANNOTATION_FILE_NAME_CONST)
+
     pass 
