@@ -24,27 +24,17 @@ def get_one_class_specific_samples(df : pd.DataFrame,class_name:str) -> pd.DataF
     
     return df 
 
-def handle_single_csv_dir_func(dir_path : str,annotation_file_name_const : str, verbose : bool = False) -> pd.DataFrame:
+def handle_single_csv_dir_func(dir_path : str, param_dict : dict ,verbose : bool = True) -> pd.DataFrame:
 
+    annotation_file_name_const = param_dict['annotation_file_name_const']
     annotation_file_path = os.path.join(dir_path,annotation_file_name_const)
     
     df = pd.read_csv(annotation_file_path)
-    df_sorted_class = sort_annotations_df_by_class(df,dir_path)
-    specific_class_df_samples = get_one_class_specific_samples(df_sorted_class,class_name='9702910116_THERABREATH ORAL RINSE MINT')
+    
+    df_sorted_by_class = sort_annotations_df_by_class(df,dir_path)
 
     if verbose : 
-        print ('\nDone with single_dir_csv ===> ' + f'{os.path.dirname(annotation_file_path)}')
+        print ('\nDone with single dir (csv-format) ===> ' + f'{os.path.dirname(annotation_file_path)}')
 
-    return df_sorted_class 
+    return df_sorted_by_class 
 
-if __name__ == '__main__':
-
-    ANNOTATION_FILE_NAME_CONST = 'annotations.csv'
-
-    main_csv_dir_path = 'Data/annotations/csv'
-    test_path_single_csv_dir = 'Data/annotations/csv/06-20 Product1'
-
-    df = handle_single_csv_dir_func(test_path_single_csv_dir,ANNOTATION_FILE_NAME_CONST)
-    
-    save_df_as_csv(df,'1.csv')
-    pass 
