@@ -1,22 +1,35 @@
 import pandas as pd 
+import numpy as np
 
-def save_df(df : pd.DataFrame , name : str , verbose = True) -> None :
-    
-    df.to_pickle(name)
-    
-    if verbose : 
-        print (f'\nSaved {name}')
+def change_col_dtype(df,col_name, new_dtype = 'int32'):
 
-def load_df(name : str) -> pd.DataFrame :
-    
-    return pd.read_pickle(name)
-    
+    df[col_name] =  df[col_name].astype(new_dtype)
+    return df 
 
 def save_df_as_csv(df : pd.DataFrame,name:str):
 
     """float_format='{:5f}'"""
     
-    df.to_csv(f'{name}', sep = '\t' , float_format='{:5f}'.format, encoding='utf-8')
+    if '.csv' in name :
+        df.to_csv(f'{name}', sep = '\t' , float_format='{:5f}'.format, encoding='utf-8')
+    else: 
+        print('\nError: You didnt entered \'.csv\'')
+
+def save_df_as_pkl(df : pd.DataFrame , name : str , verbose = True) -> None :
+    
+    if '.pkl' in name : 
+
+        df.to_pickle(name)
+        
+        if verbose : 
+            print (f'\nSaved {name}')
+
+def load_df_as_pkl(name : str) -> pd.DataFrame :
+
+    if '.pkl' in name : 
+
+        return pd.read_pickle(name)
+    
 
 def xl_to_pandas(file_name,sheet_name = None):
     
@@ -31,13 +44,3 @@ def xl_to_pandas(file_name,sheet_name = None):
 
     return dfs 
 
-# def remove_scientific_notation(df,col_name, new_dtype = 'int32'):
-
-#       if not isinstance(col_name,str):
-#             print('col_name is not a string')
-#             return False
-
-#       df[col_name] =  df[col_name].astype(new_dtype)
-#           df['SKU'] = df['SKU'].astype(np.int64)
-#     pd.DataFrame.to_csv(df,'_.csv', sep = '\t' , float_format='{:f}'.format, encoding='utf-8') 
-#       return df 
