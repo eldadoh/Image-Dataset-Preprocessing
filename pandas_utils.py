@@ -1,8 +1,6 @@
 import pandas as pd 
 import numpy as np
 
-
-
 def load_df_from_csv(csv_file_path:str) -> pd.DataFrame :
 
     df = pd.read_csv(csv_file_path,sep='\t')
