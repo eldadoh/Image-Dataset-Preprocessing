@@ -1,9 +1,12 @@
 import pandas as pd 
 import numpy as np
 
-def change_col_dtype(df,col_name, new_dtype = 'int32'):
 
-    df[col_name] =  df[col_name].astype(new_dtype)
+
+def load_df_from_csv(csv_file_path:str) -> pd.DataFrame :
+
+    df = pd.read_csv(csv_file_path,sep='\t')
+
     return df 
 
 def save_df_as_csv(df : pd.DataFrame,name:str):
@@ -15,6 +18,12 @@ def save_df_as_csv(df : pd.DataFrame,name:str):
     else: 
         print('\nError: You didnt entered \'.csv\'')
 
+def load_df_from_pkl(name : str) -> pd.DataFrame :
+
+    if '.pkl' in name : 
+
+        return pd.read_pickle(name)
+    
 def save_df_as_pkl(df : pd.DataFrame , name : str , verbose = True) -> None :
     
     if '.pkl' in name : 
@@ -24,14 +33,7 @@ def save_df_as_pkl(df : pd.DataFrame , name : str , verbose = True) -> None :
         if verbose : 
             print (f'\nSaved {name}')
 
-def load_df_as_pkl(name : str) -> pd.DataFrame :
-
-    if '.pkl' in name : 
-
-        return pd.read_pickle(name)
-    
-
-def xl_to_pandas(file_name,sheet_name = None):
+def load_df_from_xl(file_name,sheet_name = None):
     
     xl_file = pd.ExcelFile(file_name)
 
@@ -44,3 +46,7 @@ def xl_to_pandas(file_name,sheet_name = None):
 
     return dfs 
 
+def change_col_dtype(df,col_name, new_dtype = 'int32'):
+
+    df[col_name] =  df[col_name].astype(new_dtype)
+    return df 

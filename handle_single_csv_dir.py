@@ -15,15 +15,6 @@ def sort_annotations_df_by_class(df : pd.DataFrame,dir_path : str) -> pd.DataFra
     
     return df 
 
-def get_one_class_specific_samples(df : pd.DataFrame,class_name:str) -> pd.DataFrame:
-
-    df = df[df['annotation'] == class_name]
-    
-    if df.empty:
-        print(f'Could not get ==={class_name}=== samples from current dataframe')
-    
-    return df 
-
 def handle_single_csv_dir_func(dir_path : str, param_dict : dict ,verbose : bool = True) -> pd.DataFrame:
 
     annotation_file_name_const = param_dict['annotation_file_name_const']
