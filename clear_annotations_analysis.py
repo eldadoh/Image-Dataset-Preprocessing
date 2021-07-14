@@ -57,7 +57,8 @@ def get_all_dataset_specific_class_anotations(df_as_csv : pd.DataFrame,output_pa
     save_df_as_csv(annotations_count_df,annotations_count_report_path)
 
     if verbose: 
-        print(f'The next classes names had changed:\n{class_names_who_changed}\n')
+        print('The next classes names had changed:\n')
+        [print(item) for item in class_names_who_changed]
 
     return annotations_count_report_path
 
@@ -90,9 +91,6 @@ def main():
     ANNOTATIONS_BY_CLASS_DIR_PATH = 'Output/annotations_by_class'
     MAIN_DF_AS_CSV_FILE_PATH = 'Output/clear_df.csv'
     
-    
-
-
     create_dir_with_override(GENERAL_OUTPUT_PATH)
     create_dir_with_override(ANNOTATIONS_BY_CLASS_DIR_PATH)
 

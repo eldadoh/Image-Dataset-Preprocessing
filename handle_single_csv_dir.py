@@ -25,7 +25,7 @@ def handle_single_csv_dir_func(dir_path : str, param_dict : dict ,verbose : bool
     df_sorted_by_class = sort_annotations_df_by_class(df,dir_path)
 
     if verbose : 
-        print ('\nDone with single dir (csv-format) ===> ' + f'{os.path.dirname(annotation_file_path)}')
+        print ('\nDone handling single dir from (csv-format) ===> ' + f'{os.path.dirname(annotation_file_path)}')
 
     return df_sorted_by_class 
 

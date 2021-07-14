@@ -1,9 +1,10 @@
 import pandas as pd 
 import numpy as np
 
-def save_dict_as_df(dict_ : dict )-> pd.DataFrame: 
+def load_df_from_dict(dict_): 
 
-    return pd.DataFrame.from_dict(dict_,orient='index')
+    return pd.DataFrame.from_dict(dict_)
+    # return pd.DataFrame.from_dict(dict_, orient='index')
 
 def load_df_from_csv(csv_file_path:str) -> pd.DataFrame :
 
@@ -11,29 +12,11 @@ def load_df_from_csv(csv_file_path:str) -> pd.DataFrame :
 
     return df 
 
-def save_df_as_csv(df : pd.DataFrame,name:str):
-
-    """float_format='{:5f}'"""
-    
-    if '.csv' in name :
-        df.to_csv(f'{name}', sep = '\t' , float_format='{:5f}'.format, encoding='utf-8')
-    else: 
-        print('\nError: You didnt entered \'.csv\'')
-
 def load_df_from_pkl(name : str) -> pd.DataFrame :
 
     if '.pkl' in name : 
 
         return pd.read_pickle(name)
-    
-def save_df_as_pkl(df : pd.DataFrame , name : str , verbose = True) -> None :
-    
-    if '.pkl' in name : 
-
-        df.to_pickle(name)
-        
-        if verbose : 
-            print (f'\nSaved {name}')
 
 def load_df_from_xl(file_name,sheet_name = None):
     
@@ -47,6 +30,28 @@ def load_df_from_xl(file_name,sheet_name = None):
           return dfs[f'{sheet_name}']
 
     return dfs 
+
+def save_dict_as_df(dict_ : dict )-> pd.DataFrame: 
+
+    return pd.DataFrame.from_dict(dict_,orient='index')
+
+def save_df_as_csv(df : pd.DataFrame,name:str):
+
+    """float_format='{:5f}'"""
+    
+    if '.csv' in name :
+        df.to_csv(f'{name}', sep = '\t' , float_format='{:5f}'.format, encoding='utf-8')
+    else: 
+        print('\nError: You didnt entered \'.csv\'')
+    
+def save_df_as_pkl(df : pd.DataFrame , name : str , verbose = True) -> None :
+    
+    if '.pkl' in name : 
+
+        df.to_pickle(name)
+        
+        if verbose : 
+            print (f'\nSaved {name}')
 
 def change_col_dtype(df,col_name, new_dtype = 'int32'):
 
