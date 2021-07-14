@@ -1,3 +1,5 @@
+from annotations_file_preprocess import handle_all_csv_dirs
+from files_utils import create_dir_with_override
 import pandas as pd
 import numpy as np 
 import os
@@ -78,10 +80,23 @@ def creates_annotations_suspected_as_w_h_outliers_report(csv_file,output_path,w_
 
 def main():     
 
-    MAIN_DF_AS_CSV_FILE_PATH = 'Output/clear_df.csv'
-    ANNOTATIONS_BY_CLASS_DIR_PATH = 'Output/annotations_by_class'
-    GENERAL_OUTPUT_PATH = 'Output'
+    
 
+    MAIN_ANNOTATIONS_DIR_PATH_CSV = 'Data/annotations/csv'
+    MAIN_ANNOTATIONS_DIR_PATH_JSON = 'Data/annotations/json'
+    PARAM_DICT ={'annotation_file_name_const' : 'annotations.csv'}
+    
+    GENERAL_OUTPUT_PATH = 'Output'
+    ANNOTATIONS_BY_CLASS_DIR_PATH = 'Output/annotations_by_class'
+    MAIN_DF_AS_CSV_FILE_PATH = 'Output/clear_df.csv'
+    
+    
+
+
+    create_dir_with_override(GENERAL_OUTPUT_PATH)
+    create_dir_with_override(ANNOTATIONS_BY_CLASS_DIR_PATH)
+
+    handle_all_csv_dirs(MAIN_ANNOTATIONS_DIR_PATH_CSV,param_dict=PARAM_DICT,save=True)
     annotations_count_report_path = get_all_dataset_specific_class_anotations(MAIN_DF_AS_CSV_FILE_PATH,output_path=ANNOTATIONS_BY_CLASS_DIR_PATH,save = True)
     creates_annotations_count_less_than_TH_report(annotations_count_report_path , GENERAL_OUTPUT_PATH , Th = 100 )
     creates_annotations_suspected_as_w_h_outliers_report(MAIN_DF_AS_CSV_FILE_PATH,GENERAL_OUTPUT_PATH,w_th = 0.05 , h_th = 0.05 )
