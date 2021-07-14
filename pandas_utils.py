@@ -1,6 +1,10 @@
 import pandas as pd 
 import numpy as np
 
+def save_dict_as_df(dict_ : dict )-> pd.DataFrame: 
+
+    return pd.DataFrame.from_dict(dict_,orient='index')
+
 def load_df_from_csv(csv_file_path:str) -> pd.DataFrame :
 
     df = pd.read_csv(csv_file_path,sep='\t')
