@@ -67,15 +67,24 @@ def creates_annotations_count_less_than_TH_report(csv_file,output_path,Th = 100)
     output_path = os.path.join(output_path,'annotations_count_less_than_Th.csv')
     save_df_as_csv(df,output_path)
 
+def creates_annotations_suspected_as_w_h_outliers_report(csv_file,output_path,w_th = 0.1 , h_th = 0.1 ):
+
+    df = load_df_from_csv(csv_file)
+    df = df[df['width'] < w_th]
+    df = df[df['height'] < h_th] 
+    output_path = os.path.join(output_path,'annotations_suspected_as_w_h_outliers.csv')
+    save_df_as_csv(df,output_path)
+        
+
 def main():     
 
-    DF_AS_CSV_FILE_PATH = 'Output/clear_df.csv'
+    MAIN_DF_AS_CSV_FILE_PATH = 'Output/clear_df.csv'
     ANNOTATIONS_BY_CLASS_DIR_PATH = 'Output/annotations_by_class'
     GENERAL_OUTPUT_PATH = 'Output'
 
-    annotations_count_report_path = get_all_dataset_specific_class_anotations(DF_AS_CSV_FILE_PATH,output_path=ANNOTATIONS_BY_CLASS_DIR_PATH,save = True)
+    annotations_count_report_path = get_all_dataset_specific_class_anotations(MAIN_DF_AS_CSV_FILE_PATH,output_path=ANNOTATIONS_BY_CLASS_DIR_PATH,save = True)
     creates_annotations_count_less_than_TH_report(annotations_count_report_path , GENERAL_OUTPUT_PATH , Th = 100 )
-
+    creates_annotations_suspected_as_w_h_outliers_report(MAIN_DF_AS_CSV_FILE_PATH,GENERAL_OUTPUT_PATH,w_th = 0.05 , h_th = 0.05 )
 
 if __name__ == '__main__':
     main()
