@@ -6,62 +6,119 @@ import os
 import glob
 import shutil 
 
-# def preprocess_annotations_df(df : pd.DataFrame) -> pd.DataFrame:
-#     pass
-#     return df 
-
-# def handle_single_csv_dir_func(dir_path : str,annotation_file_name_const : str, verbose : bool = True) -> pd.DataFrame:
-
-#     annotation_file_path = os.path.join(dir_path,annotation_file_name_const)
+def convert_top_left_bottom_rigth_to_xywh(top_left,bottom_right,W,H):
     
-#     df = pd.read_csv(annotation_file_path)
-
-#     try : 
-#         df = preprocess_annotations_df(df)
-#     except Exception as e : 
-#         print(e)
-
-#     if verbose : 
-#         print ('\nDone with single_dir_csv ===> ' + f'{os.path.dirname(annotation_file_path)}')
-
-#     return df 
-
-def convert_top_left_bottom_rigth_to_xywh(top_left,bottom_right):
     top,left = top_left[:]
     bottom,right = bottom_right[:]
     
 
-    w = int(right - left)
-    h = int(bottom - top)
-    x = ((left + right) / 2) / w 
-    y = ((top + bottom) / 2) / h 
+    w = int(right - left) / W 
+    h = int(bottom - top) / H
+    x = ((left + right) / 2) / W
+    y = ((top + bottom) / 2) / H 
 
     return x,y,w,h
 
-if __name__ == '__main__':
+def handle_single_json_image(json_file,parent_dir):
 
-    # main_csv_dir_path = 'Data/annotations/csv'
-    # test_path_single_csv_dir = 'Data/annotations/csv/06-20 Product1'
+    missing_annotations = []
 
-    # ANNOTATION_FILE_NAME_CONST = 'annotations.csv'
-    # df_name = 'Data/test.pkl'
-
-    # df = handle_single_csv_dir_func(test_path_single_csv_dir,ANNOTATION_FILE_NAME_CONST)
-
-    json_file = 'Data/annotations/json/0011110353986/IMG_20210616_201118.jpg.json'
     with open(json_file, 'r') as f:
+
         data = json.load(f)
-        data = data['objects'][:]
-        for item in data : 
-            img_name = os.path.basename(json_file)[:-len('.json')]
+
+        W,H = data['size']['width'],data['size']['height']
+
+        annotations_list = data['objects'][:]
+
+        single_image_annotations_list = []
+
+        for item in annotations_list : 
+
+            img_name =os.path.join(parent_dir ,os.path.basename(json_file)[:-len('.json')])
+            
             c = item['classTitle'] 
+            
             top_left,bottom_right = item['points']['exterior'][:]
-            x,y,w,h = convert_top_left_bottom_rigth_to_xywh(top_left,bottom_right)
+
+            x,y,w,h = convert_top_left_bottom_rigth_to_xywh(top_left,bottom_right,W,H)
+
             sample_dict = { 'img_name' : img_name,
                             'class' : c, 
                             'x' : x,
                             'y' : y,
                             'w' : w,
                             'h' : h}
-            print()
-    pass 
+            
+            single_annotation_df = pd.DataFrame.from_dict([sample_dict])  
+
+            single_image_annotations_list.append(single_annotation_df)
+            
+        try :
+            single_image_annotations_df = pd.concat(single_image_annotations_list, ignore_index=True)   
+            return single_image_annotations_df , []
+        except: 
+            print(f'\nImage with no annotations: ------- {json_file} ------\n')
+            missing_annotations.append(json_file)
+            single_image_annotations_df = pd.DataFrame()
+            return single_image_annotations_df , missing_annotations
+                   
+
+def handle_single_json_product_dir(json_dir_path):
+
+    single_product_annotations_list = []
+    
+    missing_annotations_for_this_dir = []
+
+    for json_file in glob.glob(json_dir_path +'/*.json'):
+
+        single_image_annotations_df , missing_annotations = handle_single_json_image(json_file,json_dir_path)
+        single_product_annotations_list.append(single_image_annotations_df)
+        missing_annotations_for_this_dir.append(missing_annotations)
+
+    single_product_annotations_df = pd.concat(single_product_annotations_list, ignore_index=True)    
+
+    return single_product_annotations_df,missing_annotations_for_this_dir
+
+
+def handle_json_all_products_dir(json_main_path,print_and_save_missing_annotation_images = True):
+
+    all_products_annotations_list = []
+
+    missing_annotations_all_json_dirs = []
+
+    for product_dir in os.listdir(json_main_path):
+        
+        product_dir_path = os.path.join(json_main_path,product_dir)
+
+        single_product_annotations_df, missing_annotations_for_this_dir = handle_single_json_product_dir(product_dir_path)
+        all_products_annotations_list.append(single_product_annotations_df)
+        missing_annotations_all_json_dirs.append(missing_annotations_for_this_dir)
+
+
+    single_product_annotations_df = pd.concat(all_products_annotations_list, ignore_index=True)    
+
+    missing_result_list = []
+    if print_and_save_missing_annotation_images: 
+       for item in missing_annotations_all_json_dirs:   
+           for sublist in item : 
+               if len(sublist) != 0 : 
+                   missing_result_list.append(sublist)
+       print('\nThe next images has no annotations at all ! :\n')
+       [print(item) for item in missing_result_list]
+
+       with open('Output/missing_result_list.txt', 'w') as f:
+            for item in missing_result_list:
+                f.write(f'{item}\n')
+                
+    return single_product_annotations_df , missing_result_list  
+
+if __name__ == '__main__':
+
+    # json_dir_path  = 'Data/annotations/json/0011110353986'
+    # handle_single_json_product_dir(json_dir_path)
+
+    JSON_MAIN_DIR_PATH = 'Data/annotations/json'
+
+    handle_json_all_products_dir(JSON_MAIN_DIR_PATH,print_and_save_missing_annotation_images = True)
+    

@@ -1,11 +1,6 @@
 import pandas as pd 
 import numpy as np
 
-def load_df_from_dict(dict_): 
-
-    return pd.DataFrame.from_dict(dict_)
-    # return pd.DataFrame.from_dict(dict_, orient='index')
-
 def load_df_from_csv(csv_file_path:str) -> pd.DataFrame :
 
     df = pd.read_csv(csv_file_path,sep='\t')
@@ -30,6 +25,11 @@ def load_df_from_xl(file_name,sheet_name = None):
           return dfs[f'{sheet_name}']
 
     return dfs 
+
+def load_df_from_dict(dict_): 
+
+    return pd.DataFrame.from_dict([dict_])
+    # return pd.DataFrame.from_dict(dict_, orient='index') # if you want keys  be the index names . 
 
 def save_dict_as_df(dict_ : dict )-> pd.DataFrame: 
 

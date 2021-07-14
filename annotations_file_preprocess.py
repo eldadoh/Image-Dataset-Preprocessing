@@ -14,15 +14,6 @@ This file task is only to aggeregate all the csv&json annotation files data
 analysis of the this aggeregated (clear df) is on other file
 """
 
-# def handle_all_json_dirs(main_json_dir_path : str,verbose : bool = True) -> None:
-    
-#     for single_dir_path in glob.glob(main_json_dir_path + '/*.json'):
-#         df = handle_single_json_dir_func(single_dir_path)
-#         # aggregate dfs to new one
-
-#     if verbose : 
-#         print(f'Done handling main_csv_dir_path : {main_json_dir_path}')
-
 def handle_all_csv_dirs(main_csv_dir_path : str,param_dict : dict , verbose : bool = True , save : bool = False):
     
     small_dfs = []
@@ -48,7 +39,6 @@ def main():
     PARAM_DICT ={'annotation_file_name_const' : 'annotations.csv'}
 
     handle_all_csv_dirs(MAIN_ANNOTATIONS_DIR_PATH_CSV,param_dict=PARAM_DICT,save=True)
-    # handle_all_json_dirs(MAIN_ANNOTATIONS_DIR_PATH_JSON)
         
 if __name__ == '__main__':
     main()
