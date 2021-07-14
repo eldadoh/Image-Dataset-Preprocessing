@@ -14,10 +14,15 @@ def read_from_txt_file(txt_file_name_path = 'filename'):
         print(line)
 
 
-def write_list_to_txt_file(l,txt_path) : 
+def write_list_to_txt(l,txt_path) : 
     with open(f'{txt_path}.txt', 'w') as f:
         for item in l:
             f.write(f'{item}\n')
+
+def write_list_to_csv(l,csv_path) : 
+    with open(csv_path, 'w', newline='\n') as f:
+         wr = csv.writer(f, quoting=csv.QUOTE_ALL)
+         wr.writerow(l)
 
 def create_dir_with_override(dir_path):
     try : 

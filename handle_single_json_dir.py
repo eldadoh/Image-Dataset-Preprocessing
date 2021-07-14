@@ -19,7 +19,7 @@ def convert_top_left_bottom_rigth_to_xywh(top_left,bottom_right,W,H):
 
     return x,y,w,h
 
-def handle_single_json_image(json_file,parent_dir):
+def handle_single_json_image(json_file,parent_dir,print = False):
 
     missing_annotations = []
 
@@ -58,7 +58,8 @@ def handle_single_json_image(json_file,parent_dir):
             single_image_annotations_df = pd.concat(single_image_annotations_list, ignore_index=True)   
             return single_image_annotations_df , []
         except: 
-            print(f'\nImage with no annotations: ------- {json_file} ------\n')
+            if print: 
+                print(f'\nImage with no annotations: ------- {json_file} ------\n')
             missing_annotations.append(json_file)
             single_image_annotations_df = pd.DataFrame()
             return single_image_annotations_df , missing_annotations
@@ -81,7 +82,7 @@ def handle_single_json_product_dir(json_dir_path):
     return single_product_annotations_df,missing_annotations_for_this_dir
 
 
-def handle_json_all_products_dir(json_main_path,print_and_save_missing_annotation_images = True):
+def handle_json_all_products_dir(json_main_path,save = True,print = False):
 
     all_products_annotations_list = []
 
@@ -99,18 +100,21 @@ def handle_json_all_products_dir(json_main_path,print_and_save_missing_annotatio
     single_product_annotations_df = pd.concat(all_products_annotations_list, ignore_index=True)    
 
     missing_result_list = []
-    if print_and_save_missing_annotation_images: 
+    if save: 
        for item in missing_annotations_all_json_dirs:   
            for sublist in item : 
                if len(sublist) != 0 : 
                    missing_result_list.append(sublist)
-       print('\nThe next images has no annotations at all ! :\n')
-       [print(item) for item in missing_result_list]
-
-       with open('Output/missing_result_list.txt', 'w') as f:
+        
+       with open('Output/missing_result_list.csv', 'w', newline='\n') as f:
             for item in missing_result_list:
-                f.write(f'{item}\n')
-                
+                wr = csv.writer(f, quoting=csv.QUOTE_ALL)
+                wr.writerow(item)
+
+       if print : 
+                   print('\nThe next images has no annotations at all ! :\n')
+                   [print(item) for item in missing_result_list]        
+
     return single_product_annotations_df , missing_result_list  
 
 if __name__ == '__main__':
@@ -120,5 +124,5 @@ if __name__ == '__main__':
 
     JSON_MAIN_DIR_PATH = 'Data/annotations/json'
 
-    handle_json_all_products_dir(JSON_MAIN_DIR_PATH,print_and_save_missing_annotation_images = True)
+    handle_json_all_products_dir(JSON_MAIN_DIR_PATH,save = True,print = False)
     
